@@ -1,0 +1,8 @@
+# Bibliotecas usadas pelo projeto (instalar com: pip install -r requirements.txt)
+numpy>=1.24        # cálculos numéricos e geração de números aleatórios
+pandas>=2.0        # tabelas de resultados
+scipy>=1.10        # testes estatísticos (Wilcoxon, t de Student)
+matplotlib>=3.7    # gráficos
+pyyaml>=6.0        # leitura dos arquivos de configuração .yaml
+pytest>=7.0        # execução dos testes automatizados
+paho-mqtt>=1.6      # MQTT, só para a emulação com Raspberry Pi (emulation/)

@@ -1,0 +1,45 @@
+# Emulação usada no trabalho: rho = 0,95 x 8 replicações x 3 políticas, ~40 min.
+# 8 replicações permitem p < 0,05 no Wilcoxon pareado após a correção de Holm.
+#   python -m emulation.testbench --config emulation/configs/short.yaml --broker <IP do Pi>
+#   python -m emulation.analyze results_emulation/short
+
+nome: emulacao_curta
+saida: results_emulation/short
+broker:
+  host: 192.168.0.50          # IP do Raspberry Pi (descubra com 'hostname -I' no Pi)
+  porta: 1883
+replicacoes: 8
+semente_base: 2026
+pausa_entre_execucoes: 3
+
+# 150 pacientes enviando a cada 6 s = 25 amostras/s; com ρ = 0,95, E[S] = 38 ms.
+carga:
+  n_pacientes: 150
+  intervalo_amostragem: 6.0
+  jitter: 0.10
+  utilizacao: 0.95
+  distribuicao_servico: exponencial
+  cv_servico: 1.0
+  duracao: 90.0               # 1,5 min de envios por execução (~2.000 amostras)
+  aquecimento: 15.0           # primeiros 15 s descartados
+  proporcao_critica: 0.05
+  proporcao_deteriorando: 0.15
+  persistencia: 0.90
+  rajadas: []
+
+cenarios:
+  - nome: rho_0.95
+    parametro: utilizacao
+    valor: 0.95
+
+politicas:
+  - nome: FIFO
+    tipo: fifo
+  - nome: Prioridade NP
+    tipo: prioridade_np
+  - nome: Proposta
+    tipo: proposta
+    tempo_por_nivel_rel: 50
+    teto: {0: 1.9, 1: 2.5, 2: 2.9}
+    classe_minima_preempcao: 3
+    margem: 0.0

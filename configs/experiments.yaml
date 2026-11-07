@@ -1,0 +1,98 @@
+# Configuração completa dos experimentos de simulação.
+#   python -m fogsched.experiments --config configs/experiments.yaml
+#   python -m fogsched.analysis results/full
+
+nome: tcc_news2_completo
+saida: results/full
+replicacoes: 30          # replicações por ponto (sementes diferentes)
+semente_base: 2026       # mudar a semente-base gera um novo conjunto de cargas
+
+# --- Carga base (valores usados quando o cenário não muda nada) ---------------
+carga:
+  n_pacientes: 150
+  intervalo_amostragem: 60.0      # cada paciente envia uma amostra por minuto
+  jitter: 0.10
+  utilizacao: 0.95                # perto da saturação: é onde o escalonador importa
+  distribuicao_servico: exponencial
+  cv_servico: 1.0
+  duracao: 3600.0                 # 1 hora de chegadas
+  aquecimento: 300.0              # 5 min descartados
+  proporcao_critica: 0.05
+  proporcao_deteriorando: 0.15
+  persistencia: 0.90
+  rajadas: []
+
+simulacao:
+  custo_preempcao_rel: 0.02       # cada preempção custa 2% de E[S]
+
+# --- Políticas comparadas -----------------------------------------------------
+politicas:
+  - nome: FIFO
+    tipo: fifo
+  - nome: Prioridade NP
+    tipo: prioridade_np
+  - nome: Prioridade P
+    tipo: prioridade_p
+    classe_minima_preempcao: 3     # só alertas críticos interrompem
+  - nome: Proposta
+    tipo: proposta
+    tempo_por_nivel_rel: 50        # sobe 1 nível de prioridade a cada 50×E[S]
+    # Teto POR CLASSE: estável sobe no máximo até 1,9 (nunca alcança a média),
+    # baixa até 2,5 e média até 2,9. Nenhuma alcança a crítica (3).
+    teto: {0: 1.9, 1: 2.5, 2: 2.9}
+    classe_minima_preempcao: 3
+    margem: 0.0
+  - nome: Proposta (teto único)
+    tipo: proposta
+    tempo_por_nivel_rel: 50
+    teto: 2.9                      # variante: o mesmo teto para todas as classes
+    classe_minima_preempcao: 3
+    margem: 0.0
+
+# --- Cenários -----------------------------------------------------------------
+cenarios:
+  - id: S1_load
+    descricao: "Efeito do nível de carga (subcarga até sobrecarga)"
+    variar: utilizacao
+    valores: [0.5, 0.7, 0.8, 0.9, 0.95, 1.0, 1.05, 1.1, 1.2]
+
+  - id: S2_burst
+    descricao: "Pico súbito: chegadas 3× mais rápidas por 5 minutos"
+    sobrescrever:
+      rajadas: [{inicio: 1800.0, duracao: 300.0, fator: 3.0}]
+    variar: utilizacao
+    valores: [0.6, 0.8, 0.95]
+
+  - id: S3_critical_share
+    descricao: "Proporção de tempo em estado crítico"
+    variar: proporcao_critica
+    valores: [0.01, 0.05, 0.10, 0.20]
+
+  - id: S4_preemption_cost
+    descricao: "Custo de cada preempção (fração de E[S])"
+    variar: custo_preempcao_rel
+    valores: [0.0, 0.01, 0.05, 0.10, 0.25]
+
+  - id: S5_aging_rate
+    descricao: "Velocidade do envelhecimento (tempo para subir 1 nível, em E[S])"
+    variar: proposta.tempo_por_nivel_rel
+    valores: [10, 25, 50, 100, 200, 400]
+    politicas: [Prioridade P, Proposta, Proposta (teto único)]
+
+  - id: S6_aging_ceiling
+    descricao: "Teto do envelhecimento (carga ρ = 1,0)"
+    sobrescrever: {utilizacao: 1.0}
+    variar: proposta.teto
+    # Teto único 2,9 e três combinações de teto por classe (estável/baixa/média).
+    valores:
+      - 2.9
+      - {0: 2.5, 1: 2.7, 2: 2.9}
+      - {0: 1.9, 1: 2.5, 2: 2.9}
+      - {0: 1.5, 1: 1.9, 2: 2.9}
+    politicas: [Prioridade P, Proposta]
+
+  - id: S7_service_distribution
+    descricao: "Robustez à distribuição do tempo de serviço"
+    variar: distribuicao_servico
+    valores: [deterministica, exponencial, lognormal]
+    sobrescrever: {cv_servico: 2.0}

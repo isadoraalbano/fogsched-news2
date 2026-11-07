@@ -1,0 +1,45 @@
+# Teste rápido da bancada (~5 min, 1 replicação).
+#   python -m emulation.testbench --config emulation/configs/quick.yaml --broker <IP do Pi>
+#   python -m emulation.analyze results_emulation/quick
+
+nome: emulacao_rapida
+saida: results_emulation/quick
+broker:
+  host: 192.168.0.50
+  porta: 1883
+replicacoes: 1
+semente_base: 2026
+pausa_entre_execucoes: 2
+
+carga:
+  n_pacientes: 150
+  intervalo_amostragem: 6.0
+  jitter: 0.10
+  utilizacao: 0.95
+  distribuicao_servico: exponencial
+  cv_servico: 1.0
+  duracao: 60.0
+  aquecimento: 10.0
+  proporcao_critica: 0.05
+  proporcao_deteriorando: 0.15
+  persistencia: 0.90
+  rajadas: []
+
+cenarios:
+  - nome: rho_0.95
+    parametro: utilizacao
+    valor: 0.95
+
+politicas:
+  - nome: FIFO
+    tipo: fifo
+  - nome: Prioridade NP
+    tipo: prioridade_np
+  - nome: Prioridade P
+    tipo: prioridade_p
+    classe_minima_preempcao: 3
+  - nome: Proposta
+    tipo: proposta
+    tempo_por_nivel_rel: 50
+    teto: {0: 1.9, 1: 2.5, 2: 2.9}
+    classe_minima_preempcao: 3
