@@ -2,7 +2,7 @@
 
     python -m emulation.analyze results_emulation/short
 
-Os testes estatísticos usam a P95 das críticas: com cerca de 140 alertas
+Os testes estatísticos usam a P95 das críticas: com cerca de 150 alertas
 críticos por execução, a P99 depende de uma ou duas amostras e é apresentada
 apenas de forma descritiva. Alertas que não chegam contam como falha de entrega.
 
@@ -59,17 +59,33 @@ def _resultado_medido(df: pd.DataFrame, visao: str, preempcoes: int, ocupado: fl
 def chegadas_apos_termino(df: pd.DataFrame, janela: float = 0.001) -> float:
     """% de amostras registradas no Pi até 1 ms depois do término de outra tarefa.
 
-    Se a rede entrega as amostras de forma independente do processamento, esse
-    valor fica em poucos por cento (taxa de términos × 1 ms). Um valor alto
-    indica que as amostras ficaram retidas no caminho e só foram entregues
-    quando o Pi transmitiu um alerta, comportamento típico da economia de
-    energia do Wi-Fi: nesse caso, a fila se forma na rede, e não no Pi."""
+    Mede o quanto as chegadas ao nó coincidem com os términos de processamento."""
     fins = np.sort(df["fim_no"].to_numpy())
     chegadas = df["chegada_no"].to_numpy()
     i = np.searchsorted(fins, chegadas) - 1
     validos = i >= 0
     dist = chegadas[validos] - fins[i[validos]]
     return 100.0 * float(np.mean(dist < janela)) if len(dist) else float("nan")
+
+
+def reacao_preempcao(todas: pd.DataFrame, avaliadas: pd.DataFrame) -> np.ndarray:
+    """Tempo da chegada ao nó até o INÍCIO do atendimento (inicio_no - chegada_no),
+    só para alertas críticos que chegaram com o nó ocupado por amostra não crítica
+    e sem outro crítico no sistema. É o atraso da preempção cooperativa: passagem
+    entre os processos + término do pedaço em andamento.
+
+    'todas' define quem estava no nó em cada instante; 'avaliadas' são as
+    amostras medidas (depois do aquecimento)."""
+    ch = todas["chegada_no"].to_numpy()
+    fi = todas["fim_no"].to_numpy()
+    cl = todas["classe"].to_numpy()
+    valores = []
+    for r in avaliadas[avaliadas["classe"] == 3].itertuples():
+        no_sistema = (ch < r.chegada_no) & (fi > r.chegada_no)
+        if (no_sistema & (cl == 3)).any() or not (no_sistema & (cl < 3)).any():
+            continue
+        valores.append(r.inicio_no - r.chegada_no)
+    return np.array(valores, dtype=float)
 
 
 def carregar(pasta: str) -> pd.DataFrame:
@@ -94,17 +110,26 @@ def carregar(pasta: str) -> pd.DataFrame:
                 "duplicadas": int(est.get("duplicadas", 0)),
                 "rtt_mediana_ms": info["rede"]["rtt_mediana_ms"],
                 "pedaco_media_ms": (info.get("no_fog") or {}).get("calibracao", {}).get("pedaco_media_ms"),
-                "news2_divergente": int((recebidos["classe"] != recebidos["classe_esperada"]).sum())}
+                "classe_divergente": int((recebidos["classe"] != recebidos["classe_esperada"]).sum()),
+                "news2_divergente": int((recebidos["news2"] != recebidos["news2_esperado"]).sum())}
 
         # Medidas derivadas, por amostra (só as que chegaram depois do aquecimento).
         m = recebidos[(recebidos["t_plan"] >= aq) & (recebidos["t_plan"] <= dur)]
         interno = m["fim_no"] - m["chegada_no"]
         e2e = m["t_recebido"] - m["t_envio"]
-        reacao = m["visto_no"] - m["chegada_no"]
-        extras = {"rede_media_ms": 1e3 * float((e2e - interno).mean()),
-                  "rede_p99_ms": 1e3 * float(np.percentile(e2e - interno, 99)),
+        reacao = m["visto_no"] - m["chegada_no"]   # chegada -> processo de trabalho registra a amostra
+        rede = e2e - interno                        # parte externa ao processamento, por amostra
+        critica = m["classe"] == 3
+        preemp = reacao_preempcao(recebidos, m)
+        extras = {"rede_media_ms": 1e3 * float(rede.mean()),
+                  "rede_p99_ms": 1e3 * float(np.percentile(rede, 99)),
+                  "rede_criticas_p95_ms": 1e3 * float(np.percentile(rede[critica], 95)),
                   "reacao_media_ms": 1e3 * float(reacao.mean()),
                   "reacao_p99_ms": 1e3 * float(np.percentile(reacao, 99)),
+                  "reacao_preempcao_n": int(len(preemp)),
+                  "reacao_preempcao_media_ms": 1e3 * float(preemp.mean()) if len(preemp) else float("nan"),
+                  "reacao_preempcao_p99_ms": (1e3 * float(np.percentile(preemp, 99))
+                                              if len(preemp) else float("nan")),
                   "chegadas_pos_termino_pct": chegadas_apos_termino(recebidos)}
 
         resultados = {
@@ -148,15 +173,19 @@ def escrever_relatorio(brutos: pd.DataFrame, resumo: pd.DataFrame, testes: dict,
                 L.append(f"| {pol} | " + " | ".join(cel) + " |")
         L += ["", "### Outras métricas (ponta a ponta)", "",
               "| Política | p99 média (ms) | espera máx. estáveis (ms) | preempções/tarefa | "
-              "rede média (ms) | reação média (ms) | alertas perdidos | entrega (%) |",
-              "|---|---|---|---|---|---|---|---|"]
+              "rede média (ms) | P95 da rede, críticas (ms) | registro no worker, média (ms) | "
+              "início dos críticos que preemptam, média / P99 (ms) | alertas perdidos | entrega (%) |",
+              "|---|---|---|---|---|---|---|---|---|---|"]
         for pol in dict.fromkeys(r["politica"]):
             x = r[(r["politica"] == pol) & (r["visao"] == "ponta_a_ponta")].iloc[0]
             bb = b[b["politica"] == pol]
             L.append(f"| {pol} | {_fmt_ms(x['media_lat_p99_media'], x['media_lat_p99_ic95'])} | "
                      f"{_fmt_ms(x['estavel_espera_max_media'], x['estavel_espera_max_ic95'])} | "
                      f"{x['preempcoes_por_tarefa_media']:.3f} | {bb['rede_media_ms'].mean():.2f} | "
-                     f"{bb['reacao_media_ms'].mean():.3f} | {int(bb['perdidos'].sum())} | "
+                     f"{bb['rede_criticas_p95_ms'].mean():.2f} | "
+                     f"{bb['reacao_media_ms'].mean():.3f} | "
+                     f"{bb['reacao_preempcao_media_ms'].mean():.3f} / "
+                     f"{bb['reacao_preempcao_p99_ms'].mean():.3f} | {int(bb['perdidos'].sum())} | "
                      f"{bb['entrega_pct'].mean():.2f} |")
         t = testes.get("ponta_a_ponta")
         if t is not None and len(t):
@@ -168,27 +197,16 @@ def escrever_relatorio(brutos: pd.DataFrame, resumo: pd.DataFrame, testes: dict,
                     L.append(f"| Proposta × {row.comparada} | {row.p_holm:.4f} | {row.efeito_r:+.2f} |")
         L.append("")
     div = int(brutos.loc[brutos["visao"] == "interno", "news2_divergente"].sum())
+    div_cls = int(brutos.loc[brutos["visao"] == "interno", "classe_divergente"].sum())
     L += ["## Verificações", "",
-          f"- Amostras em que o NEWS2 calculado no Pi diferiu do esperado: **{div}** (deve ser 0).",
+          f"- Amostras em que o escore NEWS2 calculado no Pi diferiu do esperado: **{div}** (deve ser 0).",
+          f"- Amostras em que a classe de prioridade calculada no Pi diferiu da esperada: **{div_cls}** (deve ser 0).",
           f"- Alertas que não chegaram ao posto (falhas de entrega): **{int(brutos.loc[brutos['visao'] == 'interno', 'perdidos'].sum())}**.",
           f"- Amostras recebidas em duplicidade pelo nó fog (QoS 1) e descartadas: {int(brutos.loc[brutos['visao'] == 'interno', 'duplicadas'].sum())}.",
           f"- RTT mediano da rede sem carga: {brutos['rtt_mediana_ms'].median():.2f} ms.",
           f"- Duração média de um pedaço do estágio 2 no Pi: {brutos['pedaco_media_ms'].median():.3f} ms.",
           f"- Amostras entregues ao Pi logo após o término de outra tarefa (até 1 ms): "
-          f"{brutos['chegadas_pos_termino_pct'].median():.0f}% (esperado: poucos %).", ""]
-    if brutos["chegadas_pos_termino_pct"].median() > 30:
-        L += ["> **ATENÇÃO: as amostras ficaram retidas antes de chegar ao escalonador.** Elas foram",
-              "> registradas no Pi quase sempre logo depois do término de outra tarefa, então a fila",
-              "> se formou fora do Pi e a comparação entre as políticas fica distorcida. Confira se o",
-              "> Pi está com o pacote mais recente (nó fog em dois processos) e se a economia de",
-              "> energia do Wi-Fi está desligada (`sudo bash pi/install_pi.sh`); depois repita.", ""]
-    elif brutos["chegadas_pos_termino_pct"].median() > 5:
-        L += ["> Nota: parte das amostras chegou ao Pi em pequenos grupos (rede sem fio). Isso deixa",
-              "> as chegadas mais irregulares que no roteiro e tende a aumentar a fila no Pi nas",
-              "> políticas sem preempção; registre esse valor ao comparar com a simulação.", ""]
-    if brutos["rtt_mediana_ms"].median() > 20:
-        L += [f"> Nota: rede lenta (RTT mediano {brutos['rtt_mediana_ms'].median():.0f} ms). A latência",
-              "> interna não é afetada, mas a ponta a ponta inclui esses atrasos e suas variações.", ""]
+          f"{brutos['chegadas_pos_termino_pct'].median():.0f}%.", ""]
     with open(caminho, "w", encoding="utf-8") as f:
         f.write("\n".join(L))
 

@@ -1,0 +1,1130 @@
+{
+ "config": {
+  "nome": "emulacao_curta",
+  "saida": "results_emulation/short",
+  "broker": {
+   "host": "192.168.0.0",
+   "porta": 1883
+  },
+  "replicacoes": 8,
+  "semente_base": 2026,
+  "pausa_entre_execucoes": 3,
+  "carga": {
+   "n_pacientes": 150,
+   "intervalo_amostragem": 6.0,
+   "jitter": 0.1,
+   "utilizacao": 0.95,
+   "distribuicao_servico": "exponencial",
+   "cv_servico": 1.0,
+   "duracao": 90.0,
+   "aquecimento": 15.0,
+   "proporcao_critica": 0.05,
+   "proporcao_deteriorando": 0.15,
+   "persistencia": 0.9,
+   "rajadas": []
+  },
+  "cenarios": [
+   {
+    "nome": "rho_0.95",
+    "parametro": "utilizacao",
+    "valor": 0.95
+   }
+  ],
+  "politicas": [
+   {
+    "nome": "FIFO",
+    "tipo": "fifo"
+   },
+   {
+    "nome": "Prioridade NP",
+    "tipo": "prioridade_np"
+   },
+   {
+    "nome": "Proposta",
+    "tipo": "proposta",
+    "tempo_por_nivel_rel": 50,
+    "teto": {
+     "0": 1.9,
+     "1": 2.5,
+     "2": 2.9
+    },
+    "classe_minima_preempcao": 3,
+    "margem": 0.0
+   }
+  ]
+ },
+ "execucoes": {
+  "rho_0.95_rep00__Proposta": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 0,
+   "politica": "Proposta",
+   "politica_cfg": {
+    "nome": "Proposta",
+    "tipo": "proposta",
+    "tempo_por_nivel_rel": 50,
+    "teto": {
+     "0": 1.9,
+     "1": 2.5,
+     "2": 2.9
+    },
+    "classe_minima_preempcao": 3,
+    "margem": 0.0
+   },
+   "trace": "rho_0.95_rep00.json",
+   "arquivo": "rho_0.95_rep00__Proposta.csv",
+   "rede": {
+    "rtt_mediana_ms": 90.83540004212409,
+    "rtt_p95_ms": 306.75849999533966,
+    "rtt_min_ms": 81.00270002614707,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep00__Proposta",
+    "politica": "Proposta",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep00__Proposta",
+    "tempo_ocupado": 83.25552480197803,
+    "duracao": 90.78057486999023,
+    "preempcoes": 133,
+    "concluidas": 2256,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep00__Prioridade NP": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 0,
+   "politica": "Prioridade NP",
+   "politica_cfg": {
+    "nome": "Prioridade NP",
+    "tipo": "prioridade_np"
+   },
+   "trace": "rho_0.95_rep00.json",
+   "arquivo": "rho_0.95_rep00__Prioridade_NP.csv",
+   "rede": {
+    "rtt_mediana_ms": 89.70355000928976,
+    "rtt_p95_ms": 110.72449997300282,
+    "rtt_min_ms": 63.79010004457086,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep00__Prioridade NP",
+    "politica": "Prioridade NP",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep00__Prioridade NP",
+    "tempo_ocupado": 83.25810752534017,
+    "duracao": 90.81203690299299,
+    "preempcoes": 0,
+    "concluidas": 2256,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep00__FIFO": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 0,
+   "politica": "FIFO",
+   "politica_cfg": {
+    "nome": "FIFO",
+    "tipo": "fifo"
+   },
+   "trace": "rho_0.95_rep00.json",
+   "arquivo": "rho_0.95_rep00__FIFO.csv",
+   "rede": {
+    "rtt_mediana_ms": 88.745499990182,
+    "rtt_p95_ms": 102.16490004677325,
+    "rtt_min_ms": 68.38880002032965,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep00__FIFO",
+    "politica": "FIFO",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep00__FIFO",
+    "tempo_ocupado": 83.273163612801,
+    "duracao": 90.78901692799991,
+    "preempcoes": 0,
+    "concluidas": 2256,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep01__Prioridade NP": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 1,
+   "politica": "Prioridade NP",
+   "politica_cfg": {
+    "nome": "Prioridade NP",
+    "tipo": "prioridade_np"
+   },
+   "trace": "rho_0.95_rep01.json",
+   "arquivo": "rho_0.95_rep01__Prioridade_NP.csv",
+   "rede": {
+    "rtt_mediana_ms": 93.00974998041056,
+    "rtt_p95_ms": 133.1052000168711,
+    "rtt_min_ms": 65.19989995285869,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep01__Prioridade NP",
+    "politica": "Prioridade NP",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep01__Prioridade NP",
+    "tempo_ocupado": 83.72981041988533,
+    "duracao": 90.80867013199895,
+    "preempcoes": 0,
+    "concluidas": 2250,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep01__FIFO": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 1,
+   "politica": "FIFO",
+   "politica_cfg": {
+    "nome": "FIFO",
+    "tipo": "fifo"
+   },
+   "trace": "rho_0.95_rep01.json",
+   "arquivo": "rho_0.95_rep01__FIFO.csv",
+   "rede": {
+    "rtt_mediana_ms": 89.4148499937728,
+    "rtt_p95_ms": 103.40540000470355,
+    "rtt_min_ms": 76.51499996427447,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep01__FIFO",
+    "politica": "FIFO",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep01__FIFO",
+    "tempo_ocupado": 83.72161840437911,
+    "duracao": 90.80604461400071,
+    "preempcoes": 0,
+    "concluidas": 2250,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep01__Proposta": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 1,
+   "politica": "Proposta",
+   "politica_cfg": {
+    "nome": "Proposta",
+    "tipo": "proposta",
+    "tempo_por_nivel_rel": 50,
+    "teto": {
+     "0": 1.9,
+     "1": 2.5,
+     "2": 2.9
+    },
+    "classe_minima_preempcao": 3,
+    "margem": 0.0
+   },
+   "trace": "rho_0.95_rep01.json",
+   "arquivo": "rho_0.95_rep01__Proposta.csv",
+   "rede": {
+    "rtt_mediana_ms": 92.22040002350695,
+    "rtt_p95_ms": 121.53909995686263,
+    "rtt_min_ms": 82.80259999446571,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep01__Proposta",
+    "politica": "Proposta",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep01__Proposta",
+    "tempo_ocupado": 83.72978207850247,
+    "duracao": 90.81254737199924,
+    "preempcoes": 106,
+    "concluidas": 2250,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep02__Proposta": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 2,
+   "politica": "Proposta",
+   "politica_cfg": {
+    "nome": "Proposta",
+    "tipo": "proposta",
+    "tempo_por_nivel_rel": 50,
+    "teto": {
+     "0": 1.9,
+     "1": 2.5,
+     "2": 2.9
+    },
+    "classe_minima_preempcao": 3,
+    "margem": 0.0
+   },
+   "trace": "rho_0.95_rep02.json",
+   "arquivo": "rho_0.95_rep02__Proposta.csv",
+   "rede": {
+    "rtt_mediana_ms": 91.12184998230077,
+    "rtt_p95_ms": 107.73660003906116,
+    "rtt_min_ms": 63.81899997359142,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep02__Proposta",
+    "politica": "Proposta",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep02__Proposta",
+    "tempo_ocupado": 85.90304652490886,
+    "duracao": 91.56507610299741,
+    "preempcoes": 173,
+    "concluidas": 2244,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep02__Prioridade NP": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 2,
+   "politica": "Prioridade NP",
+   "politica_cfg": {
+    "nome": "Prioridade NP",
+    "tipo": "prioridade_np"
+   },
+   "trace": "rho_0.95_rep02.json",
+   "arquivo": "rho_0.95_rep02__Prioridade_NP.csv",
+   "rede": {
+    "rtt_mediana_ms": 89.79745002579875,
+    "rtt_p95_ms": 107.5000999844633,
+    "rtt_min_ms": 82.20700005767867,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep02__Prioridade NP",
+    "politica": "Prioridade NP",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep02__Prioridade NP",
+    "tempo_ocupado": 85.91436241936754,
+    "duracao": 91.57043091900414,
+    "preempcoes": 0,
+    "concluidas": 2244,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep02__FIFO": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 2,
+   "politica": "FIFO",
+   "politica_cfg": {
+    "nome": "FIFO",
+    "tipo": "fifo"
+   },
+   "trace": "rho_0.95_rep02.json",
+   "arquivo": "rho_0.95_rep02__FIFO.csv",
+   "rede": {
+    "rtt_mediana_ms": 89.6329500246793,
+    "rtt_p95_ms": 104.41440000431612,
+    "rtt_min_ms": 69.37679997645319,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep02__FIFO",
+    "politica": "FIFO",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep02__FIFO",
+    "tempo_ocupado": 85.90966111491434,
+    "duracao": 91.51287991799472,
+    "preempcoes": 0,
+    "concluidas": 2244,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep03__FIFO": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 3,
+   "politica": "FIFO",
+   "politica_cfg": {
+    "nome": "FIFO",
+    "tipo": "fifo"
+   },
+   "trace": "rho_0.95_rep03.json",
+   "arquivo": "rho_0.95_rep03__FIFO.csv",
+   "rede": {
+    "rtt_mediana_ms": 89.08770000562072,
+    "rtt_p95_ms": 103.47299999557436,
+    "rtt_min_ms": 82.48230000026524,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep03__FIFO",
+    "politica": "FIFO",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep03__FIFO",
+    "tempo_ocupado": 83.60278925063903,
+    "duracao": 90.88849431699782,
+    "preempcoes": 0,
+    "concluidas": 2259,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep03__Prioridade NP": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 3,
+   "politica": "Prioridade NP",
+   "politica_cfg": {
+    "nome": "Prioridade NP",
+    "tipo": "prioridade_np"
+   },
+   "trace": "rho_0.95_rep03.json",
+   "arquivo": "rho_0.95_rep03__Prioridade_NP.csv",
+   "rede": {
+    "rtt_mediana_ms": 89.25649998127483,
+    "rtt_p95_ms": 209.94159998372197,
+    "rtt_min_ms": 68.47179995384067,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep03__Prioridade NP",
+    "politica": "Prioridade NP",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep03__Prioridade NP",
+    "tempo_ocupado": 83.59946393979772,
+    "duracao": 90.89795688001323,
+    "preempcoes": 0,
+    "concluidas": 2259,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep03__Proposta": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 3,
+   "politica": "Proposta",
+   "politica_cfg": {
+    "nome": "Proposta",
+    "tipo": "proposta",
+    "tempo_por_nivel_rel": 50,
+    "teto": {
+     "0": 1.9,
+     "1": 2.5,
+     "2": 2.9
+    },
+    "classe_minima_preempcao": 3,
+    "margem": 0.0
+   },
+   "trace": "rho_0.95_rep03.json",
+   "arquivo": "rho_0.95_rep03__Proposta.csv",
+   "rede": {
+    "rtt_mediana_ms": 95.73015000205487,
+    "rtt_p95_ms": 128.48099996335804,
+    "rtt_min_ms": 65.44670002767816,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep03__Proposta",
+    "politica": "Proposta",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep03__Proposta",
+    "tempo_ocupado": 83.60028083418729,
+    "duracao": 90.84592057300324,
+    "preempcoes": 157,
+    "concluidas": 2259,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep04__FIFO": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 4,
+   "politica": "FIFO",
+   "politica_cfg": {
+    "nome": "FIFO",
+    "tipo": "fifo"
+   },
+   "trace": "rho_0.95_rep04.json",
+   "arquivo": "rho_0.95_rep04__FIFO.csv",
+   "rede": {
+    "rtt_mediana_ms": 91.71995002543554,
+    "rtt_p95_ms": 106.32740001892671,
+    "rtt_min_ms": 78.11599998967722,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep04__FIFO",
+    "politica": "FIFO",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep04__FIFO",
+    "tempo_ocupado": 87.4995341301983,
+    "duracao": 90.71966007399897,
+    "preempcoes": 0,
+    "concluidas": 2249,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep04__Prioridade NP": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 4,
+   "politica": "Prioridade NP",
+   "politica_cfg": {
+    "nome": "Prioridade NP",
+    "tipo": "prioridade_np"
+   },
+   "trace": "rho_0.95_rep04.json",
+   "arquivo": "rho_0.95_rep04__Prioridade_NP.csv",
+   "rede": {
+    "rtt_mediana_ms": 91.55399998417124,
+    "rtt_p95_ms": 112.4452999792993,
+    "rtt_min_ms": 67.82379996730015,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep04__Prioridade NP",
+    "politica": "Prioridade NP",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep04__Prioridade NP",
+    "tempo_ocupado": 87.50464926029963,
+    "duracao": 90.68603842900484,
+    "preempcoes": 0,
+    "concluidas": 2249,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep04__Proposta": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 4,
+   "politica": "Proposta",
+   "politica_cfg": {
+    "nome": "Proposta",
+    "tipo": "proposta",
+    "tempo_por_nivel_rel": 50,
+    "teto": {
+     "0": 1.9,
+     "1": 2.5,
+     "2": 2.9
+    },
+    "classe_minima_preempcao": 3,
+    "margem": 0.0
+   },
+   "trace": "rho_0.95_rep04.json",
+   "arquivo": "rho_0.95_rep04__Proposta.csv",
+   "rede": {
+    "rtt_mediana_ms": 90.48655000515282,
+    "rtt_p95_ms": 106.27309995470569,
+    "rtt_min_ms": 55.16899999929592,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep04__Proposta",
+    "politica": "Proposta",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep04__Proposta",
+    "tempo_ocupado": 87.5081332250702,
+    "duracao": 90.66197058699618,
+    "preempcoes": 189,
+    "concluidas": 2249,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep05__Prioridade NP": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 5,
+   "politica": "Prioridade NP",
+   "politica_cfg": {
+    "nome": "Prioridade NP",
+    "tipo": "prioridade_np"
+   },
+   "trace": "rho_0.95_rep05.json",
+   "arquivo": "rho_0.95_rep05__Prioridade_NP.csv",
+   "rede": {
+    "rtt_mediana_ms": 91.47749998373911,
+    "rtt_p95_ms": 102.36499999882653,
+    "rtt_min_ms": 72.69000000087544,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep05__Prioridade NP",
+    "politica": "Prioridade NP",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep05__Prioridade NP",
+    "tempo_ocupado": 82.41614027130709,
+    "duracao": 91.03638905000116,
+    "preempcoes": 0,
+    "concluidas": 2251,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep05__Proposta": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 5,
+   "politica": "Proposta",
+   "politica_cfg": {
+    "nome": "Proposta",
+    "tipo": "proposta",
+    "tempo_por_nivel_rel": 50,
+    "teto": {
+     "0": 1.9,
+     "1": 2.5,
+     "2": 2.9
+    },
+    "classe_minima_preempcao": 3,
+    "margem": 0.0
+   },
+   "trace": "rho_0.95_rep05.json",
+   "arquivo": "rho_0.95_rep05__Proposta.csv",
+   "rede": {
+    "rtt_mediana_ms": 91.78345001419075,
+    "rtt_p95_ms": 104.26970000844449,
+    "rtt_min_ms": 78.83499999297783,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep05__Proposta",
+    "politica": "Proposta",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep05__Proposta",
+    "tempo_ocupado": 82.43171750743932,
+    "duracao": 90.94939898699522,
+    "preempcoes": 97,
+    "concluidas": 2251,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep05__FIFO": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 5,
+   "politica": "FIFO",
+   "politica_cfg": {
+    "nome": "FIFO",
+    "tipo": "fifo"
+   },
+   "trace": "rho_0.95_rep05.json",
+   "arquivo": "rho_0.95_rep05__FIFO.csv",
+   "rede": {
+    "rtt_mediana_ms": 87.54715000395663,
+    "rtt_p95_ms": 102.0336999790743,
+    "rtt_min_ms": 71.89280004240572,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep05__FIFO",
+    "politica": "FIFO",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep05__FIFO",
+    "tempo_ocupado": 82.43016550008906,
+    "duracao": 90.93647559901001,
+    "preempcoes": 0,
+    "concluidas": 2251,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep06__Prioridade NP": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 6,
+   "politica": "Prioridade NP",
+   "politica_cfg": {
+    "nome": "Prioridade NP",
+    "tipo": "prioridade_np"
+   },
+   "trace": "rho_0.95_rep06.json",
+   "arquivo": "rho_0.95_rep06__Prioridade_NP.csv",
+   "rede": {
+    "rtt_mediana_ms": 88.25050000450574,
+    "rtt_p95_ms": 104.46440003579482,
+    "rtt_min_ms": 69.74730000365525,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep06__Prioridade NP",
+    "politica": "Prioridade NP",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep06__Prioridade NP",
+    "tempo_ocupado": 87.64295693772146,
+    "duracao": 91.72965935099637,
+    "preempcoes": 0,
+    "concluidas": 2246,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep06__FIFO": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 6,
+   "politica": "FIFO",
+   "politica_cfg": {
+    "nome": "FIFO",
+    "tipo": "fifo"
+   },
+   "trace": "rho_0.95_rep06.json",
+   "arquivo": "rho_0.95_rep06__FIFO.csv",
+   "rede": {
+    "rtt_mediana_ms": 89.03090000967495,
+    "rtt_p95_ms": 104.15799997281283,
+    "rtt_min_ms": 61.16699997801334,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep06__FIFO",
+    "politica": "FIFO",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep06__FIFO",
+    "tempo_ocupado": 87.65013231686316,
+    "duracao": 91.05670454600477,
+    "preempcoes": 0,
+    "concluidas": 2246,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep06__Proposta": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 6,
+   "politica": "Proposta",
+   "politica_cfg": {
+    "nome": "Proposta",
+    "tipo": "proposta",
+    "tempo_por_nivel_rel": 50,
+    "teto": {
+     "0": 1.9,
+     "1": 2.5,
+     "2": 2.9
+    },
+    "classe_minima_preempcao": 3,
+    "margem": 0.0
+   },
+   "trace": "rho_0.95_rep06.json",
+   "arquivo": "rho_0.95_rep06__Proposta.csv",
+   "rede": {
+    "rtt_mediana_ms": 90.6484000151977,
+    "rtt_p95_ms": 113.10780001804233,
+    "rtt_min_ms": 69.96819999767467,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep06__Proposta",
+    "politica": "Proposta",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep06__Proposta",
+    "tempo_ocupado": 87.63919658008672,
+    "duracao": 91.17988625098951,
+    "preempcoes": 140,
+    "concluidas": 2246,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep07__Proposta": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 7,
+   "politica": "Proposta",
+   "politica_cfg": {
+    "nome": "Proposta",
+    "tipo": "proposta",
+    "tempo_por_nivel_rel": 50,
+    "teto": {
+     "0": 1.9,
+     "1": 2.5,
+     "2": 2.9
+    },
+    "classe_minima_preempcao": 3,
+    "margem": 0.0
+   },
+   "trace": "rho_0.95_rep07.json",
+   "arquivo": "rho_0.95_rep07__Proposta.csv",
+   "rede": {
+    "rtt_mediana_ms": 89.41414998844266,
+    "rtt_p95_ms": 142.48189999489114,
+    "rtt_min_ms": 71.77290000254288,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep07__Proposta",
+    "politica": "Proposta",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep07__Proposta",
+    "tempo_ocupado": 84.92961087897129,
+    "duracao": 91.27099151600851,
+    "preempcoes": 186,
+    "concluidas": 2254,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep07__Prioridade NP": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 7,
+   "politica": "Prioridade NP",
+   "politica_cfg": {
+    "nome": "Prioridade NP",
+    "tipo": "prioridade_np"
+   },
+   "trace": "rho_0.95_rep07.json",
+   "arquivo": "rho_0.95_rep07__Prioridade_NP.csv",
+   "rede": {
+    "rtt_mediana_ms": 88.79585002432577,
+    "rtt_p95_ms": 104.39690004568547,
+    "rtt_min_ms": 50.69890001323074,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep07__Prioridade NP",
+    "politica": "Prioridade NP",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep07__Prioridade NP",
+    "tempo_ocupado": 84.93203960289247,
+    "duracao": 91.15726643399103,
+    "preempcoes": 0,
+    "concluidas": 2254,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  },
+  "rho_0.95_rep07__FIFO": {
+   "cenario": "rho_0.95",
+   "parametro": "utilizacao",
+   "valor": 0.95,
+   "replicacao": 7,
+   "politica": "FIFO",
+   "politica_cfg": {
+    "nome": "FIFO",
+    "tipo": "fifo"
+   },
+   "trace": "rho_0.95_rep07.json",
+   "arquivo": "rho_0.95_rep07__FIFO.csv",
+   "rede": {
+    "rtt_mediana_ms": 90.83040000405163,
+    "rtt_p95_ms": 209.5598000450991,
+    "rtt_min_ms": 79.04409995535389,
+    "rtt_n": 30
+   },
+   "no_fog": {
+    "tipo": "pronto",
+    "execucao": "rho_0.95_rep07__FIFO",
+    "politica": "FIFO",
+    "calibracao": {
+     "pedaco_media_ms": 0.46783863625023514,
+     "pedaco_p99_ms": 0.5651141770067625,
+     "pedaco_max_ms": 0.5824050022056326
+    },
+    "python": "3.13.5",
+    "plataforma": "Linux-6.18.50+rpt-rpi-v8-aarch64-with-glibc2.41"
+   },
+   "estatisticas": {
+    "tipo": "estatisticas",
+    "execucao": "rho_0.95_rep07__FIFO",
+    "tempo_ocupado": 84.92523637552222,
+    "duracao": 91.14089932400384,
+    "preempcoes": 0,
+    "concluidas": 2254,
+    "duplicadas": 0,
+    "pendentes": 0
+   },
+   "perdidos": 0
+  }
+ }
+}

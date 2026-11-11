@@ -1,0 +1,5 @@
+cenario,valor,metrica,proposta,comparada,n,media_proposta,media_comparada,mediana_diferenca,efeito_r,p,p_holm,significativo_5pct
+rho_0.95,0.95,critica_lat_p95,Proposta,Prioridade NP,8,0.20750579187370022,0.2947577468730741,-0.07815988000511424,-1.0,0.0078125,0.015625,True
+rho_0.95,0.95,estavel_espera_max,Proposta,Prioridade NP,8,2.309650861669127,2.603610082763343,-0.2900748281574874,-0.9444444444444444,0.015625,0.015625,True
+rho_0.95,0.95,critica_lat_p95,Proposta,FIFO,8,0.20750579187370022,1.1758313618604004,-0.9161070750124054,-1.0,0.0078125,0.015625,True
+rho_0.95,0.95,estavel_espera_max,Proposta,FIFO,8,2.309650861669127,1.5076036582961894,0.8071784217266365,1.0,0.0078125,0.015625,True

@@ -2,7 +2,9 @@
 
     python -m fogsched.analysis results/full
 
-Gera summary.csv, tests.csv, report.md e plots/ na pasta indicada."""
+Gera summary.csv, tests.csv, report.md e plots/ na pasta indicada.
+Quando o cenário S1_load está nos resultados, gera também
+plots/S1_nao_criticas.png, com as métricas das amostras não críticas."""
 
 import argparse
 import os
@@ -12,7 +14,6 @@ import pandas as pd
 import yaml
 from scipy import stats
 
-# Métricas que entram no resumo e nos testes: (coluna, rótulo, menor_é_melhor)
 METRICAS = [
     ("critica_lat_p99", "Latência p99 — críticas (s)", True),
     ("critica_lat_p95", "Latência p95 — críticas (s)", True),
@@ -25,10 +26,8 @@ METRICAS = [
     ("preempcoes_por_tarefa", "Preempções por tarefa", True),
 ]
 
-# Métricas testadas estatisticamente (as que respondem às hipóteses H1 e H2).
 METRICAS_TESTADAS = ["critica_lat_p99", "critica_lat_max", "media_lat_p99", "estavel_espera_max"]
 
-# Os 4 painéis de cada figura.
 PAINEIS = [
     ("critica_lat_p99", "Latência p99 — alertas críticos (s)"),
     ("media_lat_p99", "Latência p99 — classe média (s)"),
@@ -36,8 +35,6 @@ PAINEIS = [
     ("preempcoes_por_tarefa", "Preempções por tarefa"),
 ]
 
-# Cores fixas por política (a cor acompanha a política em TODAS as figuras).
-# Paleta categórica validada para daltonismo (ordem fixa, nunca reciclada).
 CORES = {
     "Proposta": "#2a78d6",
     "FIFO": "#eb6834",
@@ -48,14 +45,10 @@ CORES = {
 CORES_EXTRAS = ["#6250d6", "#e34948"]
 MARCADORES = {"Proposta": "o", "FIFO": "s", "Prioridade NP": "^", "Prioridade P": "D",
               "Proposta (teto único)": "P"}
-# Política de referência nos testes estatísticos (comparada com as demais).
 REFERENCIA = "Proposta"
 TINTA, TINTA_2, GRADE, FUNDO = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
 
 
-# ---------------------------------------------------------------------------
-# Estatística
-# ---------------------------------------------------------------------------
 def ic95(serie: pd.Series) -> float:
     """Meia-largura do intervalo de confiança de 95% (t de Student)."""
     x = serie.dropna()
@@ -100,7 +93,7 @@ def holm(pvalores: list) -> list:
     maximo = 0.0
     for posicao, idx in enumerate(ordem):
         valor = min(1.0, (m - posicao) * p[idx])
-        maximo = max(maximo, valor)         # garante monotonicidade
+        maximo = max(maximo, valor)
         ajustados[idx] = maximo
     return ajustados.tolist()
 
@@ -139,7 +132,6 @@ def testar(df: pd.DataFrame, metricas=None) -> pd.DataFrame:
     res = pd.DataFrame(linhas)
     if res.empty:
         return res
-    # Holm aplicado separadamente para cada métrica (cada família de hipóteses).
     res["p_holm"] = np.nan
     for col, g in res.groupby("metrica"):
         res.loc[g.index, "p_holm"] = holm(g["p"].tolist())
@@ -147,9 +139,6 @@ def testar(df: pd.DataFrame, metricas=None) -> pd.DataFrame:
     return res
 
 
-# ---------------------------------------------------------------------------
-# Gráficos
-# ---------------------------------------------------------------------------
 def _cor(politica: str, extras: dict) -> str:
     if politica in CORES:
         return CORES[politica]
@@ -165,7 +154,7 @@ def rotulo_valor(v) -> str:
         try:
             d = yaml.safe_load(texto)
             return "/".join(str(d[k]) for k in sorted(d))
-        except Exception:  # noqa: BLE001 — se não der para encurtar, mostra como está
+        except Exception:  # noqa: BLE001
             return texto
     return texto
 
@@ -181,13 +170,11 @@ def _numerico(valores) -> bool:
 def graficar_cenario(resumo: pd.DataFrame, cenario: str, titulo: str, pasta: str) -> str:
     """Uma figura com 4 painéis (uma métrica por painel, um eixo cada)."""
     import matplotlib
-    matplotlib.use("Agg")                    # gera arquivos sem abrir janela
+    matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     r = resumo[resumo["cenario"] == cenario].copy()
     politicas = list(dict.fromkeys(r["politica"]))
-    # Desenha a política de referência por último, para ficar visível por cima
-    # quando várias linhas coincidem (resultados idênticos se sobrepõem).
     politicas.sort(key=lambda p: p == REFERENCIA)
     numerico = _numerico(r["valor"].unique())
     if numerico:
@@ -210,17 +197,15 @@ def graficar_cenario(resumo: pd.DataFrame, cenario: str, titulo: str, pasta: str
         for k, pol in enumerate(politicas):
             d = r[r["politica"] == pol].sort_values("x")
             cor = _cor(pol, extras)
-            # Em eixos categóricos, desloca levemente cada política para os
-            # pontos não ficarem um em cima do outro.
             x = d["x"] if numerico else d["x"] + (k - (n_pol - 1) / 2) * 0.12
             ax.errorbar(x, d[media], yerr=d[ic], color=cor, marker=MARCADORES.get(pol, "o"),
                         markersize=5, linewidth=2 if numerico else 0, elinewidth=1, capsize=2,
                         markeredgecolor=FUNDO, markeredgewidth=0.8, label=pol)
         valores_pos = r[media][r[media] > 0]
         if col != "preempcoes_por_tarefa" and len(valores_pos) and valores_pos.max() / valores_pos.min() > 50:
-            ax.set_yscale("log")            # escala log quando os valores variam muito
+            ax.set_yscale("log")
         if numerico and r["x"].min() > 0 and r["x"].max() / r["x"].min() >= 20:
-            ax.set_xscale("log")            # ex.: 10, 50, 200, 400 ficam bem espaçados
+            ax.set_xscale("log")
         ax.set_title(rotulo, fontsize=9.5, color=TINTA, loc="left")
         ax.set_xlabel(r["parametro"].iloc[0])
         if not numerico:
@@ -242,9 +227,87 @@ def graficar_cenario(resumo: pd.DataFrame, cenario: str, titulo: str, pasta: str
     return caminho
 
 
-# ---------------------------------------------------------------------------
-# Relatório em Markdown
-# ---------------------------------------------------------------------------
+def _virgula(numero, _posicao=None) -> str:
+    """Número com vírgula decimal: 0.5 vira "0,5" e 1.0 vira "1"."""
+    return f"{float(numero):g}".replace(".", ",")
+
+
+def graficar_nao_criticas(df: pd.DataFrame, pasta: str, cenario: str = "S1_load",
+                           base: str = "Prioridade P"):
+    """Amostras não críticas no cenário de carga (S1), em dois painéis.
+
+    (a) Redução percentual da espera máxima das estáveis frente à Prioridade P,
+        que difere da Proposta apenas pelo envelhecimento. A redução é calculada
+        replicação a replicação e depois promediada (barras).
+    (b) Latência p99 da classe média, em escala logarítmica (linhas).
+
+    Devolve o caminho da figura, ou None se o cenário ou as políticas
+    necessárias não estiverem no raw.csv.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import FuncFormatter
+
+    d = df[df["cenario"] == cenario]
+    necessarias = ["FIFO", base, "Proposta (teto único)", "Proposta"]
+    if d.empty or not set(necessarias) <= set(d["politica"]):
+        return None
+    d = d.assign(rho=pd.to_numeric(d["valor"]))
+    espera = d.pivot(index=["rho", "replicacao"], columns="politica", values="estavel_espera_max")
+    p99 = d.pivot(index=["rho", "replicacao"], columns="politica", values="media_lat_p99")
+    niveis = sorted(d["rho"].unique())
+    pos = np.arange(len(niveis))
+
+    def media_ic(serie):
+        por_nivel = serie.groupby(level="rho")
+        return por_nivel.mean().reindex(niveis), por_nivel.apply(ic95).reindex(niveis)
+
+    plt.rcParams.update({"font.size": 11, "axes.edgecolor": TINTA_2, "axes.labelcolor": TINTA,
+                         "xtick.color": TINTA, "ytick.color": TINTA, "text.color": TINTA})
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(9.3, 4.2), facecolor="white")
+
+    largura = 0.38
+    for desloc, pol in [(-largura / 2, "Proposta"), (largura / 2, "Proposta (teto único)")]:
+        media, ic = media_ic((1 - espera[pol] / espera[base]) * 100)
+        ax_a.bar(pos + desloc, media, width=largura - 0.04, color=CORES[pol], yerr=ic,
+                 error_kw=dict(ecolor=TINTA_2, capsize=2.5, linewidth=1))
+    ax_a.axhline(0, color=TINTA_2, linewidth=0.8)
+    ax_a.set_title(f"(a) Redução da espera máxima das\nestáveis frente à {base} (%)",
+                   loc="left", fontsize=11)
+    ax_a.grid(True, axis="y", color=GRADE, linewidth=0.8)
+
+    for pol in ["FIFO", "Proposta (teto único)", base, "Proposta"]:
+        media, ic = media_ic(p99[pol])
+        ax_b.errorbar(pos, media, yerr=ic, color=CORES[pol], marker=MARCADORES[pol],
+                      markersize=7, markeredgecolor="white", markeredgewidth=1,
+                      linewidth=2, capsize=2.5, label=pol)
+    ax_b.set_yscale("log")
+    ax_b.yaxis.set_major_formatter(FuncFormatter(_virgula))
+    ax_b.set_title("(b) Latência P99 da classe média (s)\n(escala logarítmica)",
+                   loc="left", fontsize=11)
+    ax_b.grid(True, color=GRADE, linewidth=0.8)
+
+    for ax in (ax_a, ax_b):
+        ax.set_xlabel("Utilização ρ")
+        ax.set_xticks(pos, [_virgula(n) for n in niveis])
+        ax.set_axisbelow(True)
+        for lado in ("top", "right"):
+            ax.spines[lado].set_visible(False)
+
+    alcas, rotulos = ax_b.get_legend_handles_labels()
+    ordem = [rotulos.index(p) for p in necessarias]
+    fig.legend([alcas[i] for i in ordem], [rotulos[i] for i in ordem],
+               loc="lower center", ncol=4, frameon=False)
+    fig.tight_layout(rect=(0, 0.08, 1, 1))
+    os.makedirs(pasta, exist_ok=True)
+    caminho = os.path.join(pasta, "S1_nao_criticas.png")
+    fig.savefig(caminho, dpi=300, facecolor="white")
+    plt.close(fig)
+    plt.rcdefaults()
+    return caminho
+
+
 def _fmt(media, ic) -> str:
     if pd.isna(media):
         return "—"
@@ -275,7 +338,7 @@ def escrever_relatorio(resumo, testes, descricoes, caminho):
                 continue
             tab = r.pivot_table(index="valor", columns="politica", values=f"{col}_media", aggfunc="first")
             ics = r.pivot_table(index="valor", columns="politica", values=f"{col}_ic95", aggfunc="first")
-            ordem = sorted(tab.index, key=_chave_ordem)   # 10 < 50 < 200, não "10" < "200" < "50"
+            ordem = sorted(tab.index, key=_chave_ordem)
             tab, ics = tab.reindex(ordem), ics.reindex(ordem)
             linhas += [f"**{rotulo}** (parâmetro: `{r['parametro'].iloc[0]}`)", "",
                        "| valor | " + " | ".join(tab.columns) + " |",
@@ -303,7 +366,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     df = pd.read_csv(os.path.join(args.pasta, "raw.csv"))
-    df["valor"] = df["valor"].astype(str)   # valores podem ser números ou textos
+    df["valor"] = df["valor"].astype(str)
     descricoes = {}
     caminho_cfg = os.path.join(args.pasta, "config_used.yaml")
     if os.path.exists(caminho_cfg):
@@ -318,6 +381,9 @@ def main(argv=None):
     for cen in dict.fromkeys(resumo["cenario"]):
         caminho = graficar_cenario(resumo, cen, f"{cen} — {descricoes.get(cen, '')}",
                                    os.path.join(args.pasta, "plots"))
+        print("figura:", caminho)
+    caminho = graficar_nao_criticas(df, os.path.join(args.pasta, "plots"))
+    if caminho:
         print("figura:", caminho)
     escrever_relatorio(resumo, testes, descricoes, os.path.join(args.pasta, "report.md"))
     print("resumo, testes e report.md gerados em", args.pasta)
